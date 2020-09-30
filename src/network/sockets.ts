@@ -2,6 +2,7 @@ export const userJoinedChat = (socket, setAllChats) => {
     socket.on('user has joined', (user) => {
         setAllChats((prev) => [...prev, { joinedUser: user }]);
     });
+    return () => socket.off('user has joined')
 };
 
 export const userLeftChatMessage = (socket, setAllChats) => {
@@ -9,6 +10,7 @@ export const userLeftChatMessage = (socket, setAllChats) => {
         setAllChats((prev) => [...prev, { leftUser: user }]);
         socket.disconnect();
     });
+    return () => socket.off('user has left')
 };
 
 export const receiveMessages = (socket, setAllChats) => {
@@ -16,6 +18,7 @@ export const receiveMessages = (socket, setAllChats) => {
         const newMessages = JSON.parse(event);
         setAllChats((prev) => [...prev, newMessages]);
     });
+    return () => socket.off('news')
 };
 
 export const sendMessages = async (socket, lastMessage) => socket.emit('news', JSON.stringify(lastMessage));

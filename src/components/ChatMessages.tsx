@@ -6,12 +6,11 @@ import { sendMessages } from '../network/sockets';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/index';
 import PropTypes from 'prop-types';
-import io from 'socket.io-client';
 import { userJoinedChat, userLeftChatMessage, receiveMessages } from '../network/sockets';
 import { sendMessage } from '../store/chat/actions';
+import { useSocket } from '../contexts/SocketProvider'
 
 // const socket = io('https://chat-cafe-app-server.herokuapp.com/');
-const socket = io('http://localhost:8080/');
 
 const useStyles = makeStyles((theme) => ({
     messageList: {
@@ -134,6 +133,7 @@ export default function ChatMessages({ id, user }) {
     const timestamp = Date.now();
     const message = userChatTemp;
     const messageListRef = useRef<HTMLDivElement | null>(null);
+    const socket = useSocket();
 
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -146,22 +146,27 @@ export default function ChatMessages({ id, user }) {
     };
 
     useEffect(() => {
-        if (!socket.connected) {
-            socket.connect();
-        }
-    });
-    useEffect(() => {
         userJoinedChat(socket, setAllChats);
-        userLeftChatMessage(socket, setAllChats);
-    }, [loggedIn]);
+        return () => socket.off('user has joined')
+        
+    }, [socket, loggedIn]);
 
     useEffect(() => {
+        userLeftChatMessage(socket, setAllChats);
+        return () => socket.off('user has left')
+    }, [socket, loggedIn])
+
+    useEffect(() => {
+        if (socket === null) return
         receiveMessages(socket, setAllChats);
-    }, []);
+
+        return () => socket.off('news')
+    }, [socket]);
 
     useEffect(() => {
         scrollToBottom();
     }, [allChats]);
+
     useEffect(() => {
         if (currentUsersMessages.length !== 0) {
             writeToDataBase(currentUsersMessages);

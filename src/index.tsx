@@ -5,6 +5,8 @@ import App from './App';
 import { createStore, compose, applyMiddleware } from 'redux';
 import rootReducer from './store';
 import { Provider } from 'react-redux';
+import { SocketProvider } from './contexts/SocketProvider';
+
 
 import thunk from 'redux-thunk';
 
@@ -14,7 +16,9 @@ const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)))
 
 ReactDOM.render(
     <Provider store={store}>
+        <SocketProvider>
         <App />
+        </SocketProvider>
     </Provider>,
     document.getElementById('root'),
 );

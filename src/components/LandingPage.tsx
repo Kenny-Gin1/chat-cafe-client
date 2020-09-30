@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -6,15 +6,14 @@ import 'fontsource-roboto';
 import { checkAuth } from '../lib/auth';
 import { RootState } from '../store/index';
 import { Alert } from '@material-ui/lab';
-import io from 'socket.io-client';
 import { SERVER_UNAVAILABLE } from '../store/system/messages';
 import { serverError } from '../store/system/actions';
 import { updateUserName, loggedIn, serverConnected } from '../store/system/actions';
 import { sendUserName, checkUserName } from '../network/sockets';
 import PropTypes from 'prop-types';
+import { useSocket } from '../contexts/SocketProvider'
 
 //const socket = io('https://chat-cafe-app-server.herokuapp.com/');
-const socket = io('http://localhost:8080/');
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function LandingPage({ errorMessageFromState, message }) {
+
+    const socket = useSocket();
+
     const classes = useStyles();
     const dispatch = useDispatch();
     const serverDown = useSelector((state: RootState) => state.system.serverDown);

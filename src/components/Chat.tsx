@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import 'fontsource-roboto';
@@ -7,14 +7,13 @@ import { RootState } from '../store';
 import { signOut, deleteCurrentUser, getUserId } from '../lib/auth';
 import ChatMessages from './ChatMessages';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import io from 'socket.io-client';
 import { logOut } from '../store/system/actions';
 import { userLeavingEmitAction, userHasDisconnectedAction } from '../network/sockets';
 import { LOGGED_OUT } from '../store/system/messages';
+import { useSocket } from '../contexts/SocketProvider'
 
 //const socket = io('https://chat-cafe-app-server.herokuapp.com/');
 
-const socket = io('http://localhost:8080/');
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -71,6 +70,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Chat() {
+    const socket = useSocket();
+
     const classes = useStyles();
     const dispatch = useDispatch();
     const userName = useSelector((state: RootState) => state.system.userName);
