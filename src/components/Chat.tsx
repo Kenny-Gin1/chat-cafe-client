@@ -91,10 +91,6 @@ export default function Chat() {
         } catch (e) {
             console.log(e.message);
         }
-
-        return () => {
-            socket.off();
-        };
     };
     return (
         <div className={classes.root}>

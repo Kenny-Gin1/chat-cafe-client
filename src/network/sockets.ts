@@ -1,27 +1,42 @@
+import { serverDisconnectedTimeOut } from '../store/system/actions';
+import { TIMEOUT_DISCONNECT } from '../store/system/messages';
+
 export const userJoinedChat = (socket, setAllChats) => {
     socket.on('user has joined', (user) => {
         setAllChats((prev) => [...prev, { joinedUser: user }]);
     });
-    return () => socket.off('user has joined')
 };
 
 export const userLeftChatMessage = (socket, setAllChats) => {
     socket.on('user has left', (user) => {
         setAllChats((prev) => [...prev, { leftUser: user }]);
-        socket.disconnect();
     });
-    return () => socket.off('user has left')
 };
 
+export const userInactivityDisconnect = (socket, dispatch) => {
+    socket.on('user disconnected due to inactivity', (user) => {
+        console.log('how many times?')
+        dispatch(serverDisconnectedTimeOut({
+            loggedIn: false,
+            userName: '',
+            serverDown: false,
+            errorMessage: TIMEOUT_DISCONNECT,
+         }),
+        )
+    })
+}
+
 export const receiveMessages = (socket, setAllChats) => {
-    socket.on('news', (event) => {
+    socket.on('receive messages', (event) => {
         const newMessages = JSON.parse(event);
         setAllChats((prev) => [...prev, newMessages]);
     });
-    return () => socket.off('news')
 };
 
-export const sendMessages = async (socket, lastMessage) => socket.emit('news', JSON.stringify(lastMessage));
+export const sendMessages = async (socket, lastMessage, setAllChats) => { 
+    socket.emit('send messages', JSON.stringify(lastMessage)) 
+    setAllChats((prev) => [...prev, lastMessage]);
+}; 
 
 export const userLeavingEmitAction = (socket, currUser) => socket.emit('user has left', currUser);
 

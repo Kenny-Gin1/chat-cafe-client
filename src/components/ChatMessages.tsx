@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { writeToDataBase, getLastMessageAndSend } from '../lib/db';
 import { Button } from '@material-ui/core';
 import { sendMessages } from '../network/sockets';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/index';
 import PropTypes from 'prop-types';
-import { userJoinedChat, userLeftChatMessage, receiveMessages } from '../network/sockets';
+import { userJoinedChat, userLeftChatMessage, receiveMessages, userInactivityDisconnect } from '../network/sockets';
 import { sendMessage } from '../store/chat/actions';
-import { useSocket } from '../contexts/SocketProvider'
+import { useSocket } from '../contexts/SocketProvider';
+
 
 // const socket = io('https://chat-cafe-app-server.herokuapp.com/');
 
@@ -137,49 +137,42 @@ export default function ChatMessages({ id, user }) {
 
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
-    const handleMessages = async (snapshot) => {
-        const data = snapshot.val();
-        if (data.message !== null && data.message !== '' && data.message !== undefined) {
-            await sendMessages(socket, data);
-        }
-        return;
-    };
-
     useEffect(() => {
         userJoinedChat(socket, setAllChats);
         return () => socket.off('user has joined')
-        
     }, [socket, loggedIn]);
 
     useEffect(() => {
         userLeftChatMessage(socket, setAllChats);
         return () => socket.off('user has left')
-    }, [socket, loggedIn])
+    }, [socket, loggedIn]);
 
     useEffect(() => {
-        if (socket === null) return
-        receiveMessages(socket, setAllChats);
+        userInactivityDisconnect( socket, dispatch);
+        return () => socket.off('user disconnected due to inactivity')
+    }, [socket, dispatch])
 
-        return () => socket.off('news')
+    useEffect(() => {
+        if (socket === null) return;
+        receiveMessages(socket, setAllChats)
+        return () => socket.off('receive messages')
     }, [socket]);
 
     useEffect(() => {
         scrollToBottom();
     }, [allChats]);
 
-    useEffect(() => {
-        if (currentUsersMessages.length !== 0) {
-            writeToDataBase(currentUsersMessages);
-        }
-        getLastMessageAndSend(handleMessages);
-    }, [currentUsersMessages]);
-
     const submitMessage = async (e: React.MouseEvent | React.FormEvent) => {
         e.preventDefault();
-        dispatch(sendMessage({ user, id, message, timestamp }));
-        setUserChatTemp('');
+        if (message !== null && message !== '' && message !== undefined) {
+            dispatch(sendMessage({ user, id, message, timestamp }));
+            const testMessage = {user, id, message, timestamp}
+            sendMessages(socket, testMessage, setAllChats)
+            setUserChatTemp('');
+        }
+        return;
     };
-    const handleChange = async (e) => await setUserChatTemp(e.target.value);
+    const handleChange = (e) => setUserChatTemp(e.target.value);
 
     const scrollToBottom = () =>
         messageListRef?.current?.scrollTo({
@@ -193,7 +186,6 @@ export default function ChatMessages({ id, user }) {
                 {allChats.map((chat: Record<string, number>) => {
                     return (
                         <div
-                            key={chat.timestamp ? chat.timestamp : null}
                             className={`${classes.messageRow} ${
                                 chat.user === user ? classes.myMessages : classes.otherMessages
                             }`}

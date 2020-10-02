@@ -18,11 +18,11 @@ function App() {
 
     useEffect(() => {
         if (socket === null || socket === undefined) return;
-        socket.on('connection', () => {
+        socket.on('connect', () => {
             dispatch(serverConnected({ serverDown: false }));
         });
         return () => {
-            socket.off('connection');
+            socket.off('connect');
         };
     }, [socket, dispatch]);
 
@@ -38,23 +38,6 @@ function App() {
 
     useEffect(() => {
         if (socket === null || socket === undefined) return;
-        socket.on('user disconnected due to inactivity', () => {
-            dispatch(
-                serverDisconnectedTimeOut({
-                    loggedIn: false,
-                    userName: '',
-                    serverDown: false,
-                    errorMessage: TIMEOUT_DISCONNECT,
-                }),
-            );
-        });
-        return () => {
-            socket.off('user disconnected due to inactivity');
-        };
-    }, [socket, dispatch]);
-
-    useEffect(() => {
-        if (socket === null || socket === undefined) return;
         setInterval(() => {
             if (!socket.connected) {
                 dispatch(
@@ -62,6 +45,7 @@ function App() {
                 );
             }
         }, 1000);
+        return () => socket.off()
     }, [socket, dispatch]);
 
     return (

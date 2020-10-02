@@ -1,5 +1,6 @@
 import { db } from '../services/firebase';
 
+/* DEPRECATED */
 export const loadMessages = async (): Promise<string[]> => {
     const messages: string[] = [];
     try {
