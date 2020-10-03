@@ -12,7 +12,7 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     const newSocket = io(
-      'https://cors-anywhere.herokuapp.com/https://chat-cafe-app-server.herokuapp.com/'
+      'https://chat-cafe-app-server.herokuapp.com/'
     )
     setSocket(newSocket)
 
