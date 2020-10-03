@@ -18,20 +18,10 @@ function App() {
     useEffect(() => {
         if (socket === null || socket === undefined) return;
         socket.on('connect', () => {
-            dispatch(serverConnected({ serverDown: false }));
+            dispatch(serverConnected({ serverDown: false, errorMessage: '' }));
         });
         return () => {
             socket.off('connect');
-        };
-    }, [socket, dispatch]);
-
-    useEffect(() => {
-        if (socket === null || socket === undefined) return;
-        socket.on('disconnect', (error) => {
-            dispatch(serverError({ loggedIn: false, errorMessage: SERVER_DOWN, serverDown: true, message: '' }));
-        });
-        return () => {
-            socket.off('disconnect');
         };
     }, [socket, dispatch]);
 
