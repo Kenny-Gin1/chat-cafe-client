@@ -12,7 +12,7 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     const newSocket = io(
-      'https://git.heroku.com/chat-cafe-app-server.git'
+      'http://chat-cafe-app-server.herokuapp.com/'
     )
     setSocket(newSocket)
 
