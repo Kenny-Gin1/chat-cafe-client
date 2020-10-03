@@ -12,7 +12,7 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     const newSocket = io(
-      'http://localhost:8080'
+      'https://chat-cafe-app-server.herokuapp.com/'
     )
     setSocket(newSocket)
 

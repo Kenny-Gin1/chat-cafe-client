@@ -12,8 +12,6 @@ import { userLeavingEmitAction, userHasDisconnectedAction } from '../network/soc
 import { LOGGED_OUT } from '../store/system/messages';
 import { useSocket } from '../contexts/SocketProvider'
 
-//const socket = io('https://chat-cafe-app-server.herokuapp.com/');
-
 
 const useStyles = makeStyles((theme) => ({
     root: {

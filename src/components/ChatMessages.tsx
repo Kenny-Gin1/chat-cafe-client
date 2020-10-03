@@ -9,9 +9,6 @@ import { userJoinedChat, userLeftChatMessage, receiveMessages, userInactivityDis
 import { sendMessage } from '../store/chat/actions';
 import { useSocket } from '../contexts/SocketProvider';
 
-
-// const socket = io('https://chat-cafe-app-server.herokuapp.com/');
-
 const useStyles = makeStyles((theme) => ({
     messageList: {
         background: 'white',
@@ -127,7 +124,6 @@ export default function ChatMessages({ id, user }) {
     const [userChatTemp, setUserChatTemp] = useState('');
     const [allChats, setAllChats] = useState([]);
     const loggedIn = useSelector((state: RootState) => state.system.loggedIn);
-    const currentUsersMessages = useSelector((state: RootState) => state.chat.messages);
     const classes = useStyles();
     const dispatch = useDispatch();
     const timestamp = Date.now();

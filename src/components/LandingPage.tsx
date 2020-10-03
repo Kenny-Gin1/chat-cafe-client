@@ -8,12 +8,11 @@ import { RootState } from '../store/index';
 import { Alert } from '@material-ui/lab';
 import { SERVER_UNAVAILABLE } from '../store/system/messages';
 import { serverError } from '../store/system/actions';
-import { updateUserName, loggedIn, serverConnected } from '../store/system/actions';
+import { updateUserName, loggedIn } from '../store/system/actions';
 import { sendUserName, checkUserName } from '../network/sockets';
 import PropTypes from 'prop-types';
 import { useSocket } from '../contexts/SocketProvider'
 
-//const socket = io('https://chat-cafe-app-server.herokuapp.com/');
 
 const useStyles = makeStyles((theme) => ({
     root: {

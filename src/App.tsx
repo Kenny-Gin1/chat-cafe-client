@@ -3,11 +3,10 @@ import LandingPage from './components/LandingPage';
 import Chat from './components/Chat';
 import { RootState } from './store/index';
 import { useSelector, useDispatch } from 'react-redux';
-import { SERVER_DOWN, SERVER_UNAVAILABLE, TIMEOUT_DISCONNECT } from './store/system/messages';
-import { serverError, serverConnected, serverDisconnectedTimeOut } from './store/system/actions';
+import { SERVER_DOWN, SERVER_UNAVAILABLE } from './store/system/messages';
+import { serverError, serverConnected } from './store/system/actions';
 import { useSocket } from './contexts/SocketProvider';
 
-//const socket = io('https://chat-cafe-app-server.herokuapp.com/');
 
 function App() {
     const socket = useSocket();
