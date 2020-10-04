@@ -15,7 +15,6 @@ export const userLeftChatMessage = (socket, setAllChats) => {
 
 export const userInactivityDisconnect = (socket, dispatch) => {
     socket.on('user disconnected due to inactivity', (user) => {
-        console.log('how many times?')
         dispatch(serverDisconnectedTimeOut({
             loggedIn: false,
             userName: '',
